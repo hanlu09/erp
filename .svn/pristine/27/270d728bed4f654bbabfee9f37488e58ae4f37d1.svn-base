@@ -1,0 +1,16 @@
+package cn.itcast.erp.action;
+
+import cn.itcast.erp.biz.IInventoryBiz;
+import cn.itcast.erp.entity.Emp;
+import cn.itcast.erp.entity.Inventory;
+
+public class InventoryAction extends BaseAction<Inventory> {
+
+	private IInventoryBiz inventoryBiz;
+
+	public void setInventoryBiz(IInventoryBiz inventoryBiz) {
+		this.inventoryBiz = inventoryBiz;
+		setBaseBiz(inventoryBiz);
+	}
+	
+}

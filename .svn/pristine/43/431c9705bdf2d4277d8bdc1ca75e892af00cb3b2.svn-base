@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>增加订单</title>
+<link rel="stylesheet" type="text/css" href="ui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="ui/themes/icon.css">
+<script type="text/javascript" src="ui/jquery.min.js"></script>
+<script type="text/javascript" src="ui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="ui/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="js/form.js"></script>
+<script type="text/javascript" src="js/request.js"></script>
+<script type="text/javascript" src="js/order_add.js"></script>
+<script type="text/javascript">
+
+if(Request['type']=='1'){
+	document.title='采购申请';
+}
+if(Request['type']=='2'){
+	document.title='销售订单录入';
+}
+</script>
+
+</head>
+<body>
+<form id="orderForm">
+<script type="text/javascript">
+if(Request['type']=='1'){
+	document.write("供应商");
+}
+if(Request['type']=='2'){
+	document.write("客户");
+}
+</script>
+
+：<input name="t.supplieruuid" id="supplier">
+</form>
+
+<table id="grid"></table>
+合计：<span id="sum">0.00</span>
+<button id="btnSave">提交订单</button>
+</body>
+</html>

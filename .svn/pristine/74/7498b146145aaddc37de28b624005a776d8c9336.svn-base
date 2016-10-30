@@ -1,0 +1,7 @@
+package cn.itcast.erp.biz;
+
+import cn.itcast.erp.entity.Inventory;
+
+public interface IInventoryBiz extends IBaseBiz<Inventory> {
+
+}

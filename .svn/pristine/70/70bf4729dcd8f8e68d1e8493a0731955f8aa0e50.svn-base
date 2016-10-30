@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>商品记录导入</title>
+</head>
+<body>
+    <form action="goods_upload.action" method="post" enctype="multipart/form-data">
+    	选择上传的文件:<input name="file" type="file">
+    	<button>上传</button>    
+    </form>   
+</body>
+</html>

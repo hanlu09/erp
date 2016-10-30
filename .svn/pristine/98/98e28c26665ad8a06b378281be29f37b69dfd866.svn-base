@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>销售退货入库</title>
+<link rel="stylesheet" type="text/css" href="ui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="ui/themes/icon.css">
+<script type="text/javascript" src="ui/jquery.min.js"></script>
+<script type="text/javascript" src="ui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="ui/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="ui/datagrid-detailview.js"></script>
+<script type="text/javascript" src="js/form.js"></script>
+<script type="text/javascript" src="js/date.js"></script>
+<script type="text/javascript" src="js/request.js"></script>
+<script type="text/javascript" src="js/ajax.js"></script>
+<script type="text/javascript" src="js/returnorders.js"></script>
+<script type="text/javascript" src="js/data/returnstate.js"></script>
+<script type="text/javascript" src="js/data/returntype.js"></script>
+<script type="text/javascript">
+var url='returnorders_listByPage.action?t1.state=1&t1.type='+Request["type"];
+var operation={};
+var isFilter=true;//过滤 
+
+if(Request["type"] == "1") {
+	document.title = "采购退货出库";
+}
+if(Request["type"] == "2") {
+	document.title = "销售退货出库";
+}
+
+</script>
+</head>
+<body>
+<div class="easyui-panel">
+<form id="searchForm">	
+</form>
+</div>
+<table id="grid"></table>
+
+<div id="orderWindow" class="easyui-window" title="订单明细" style="height: 200px;width: 350px" data-options="closed:true">
+
+<form id="orderForm">
+<input type="hidden" name="id" id="uuid">
+<table>
+	<tr>
+		<td>商品ID</td>
+		<td id="goodsuuid"></td>
+		<td>商品名称</td>
+		<td id="goodsname"></td>
+	</tr>
+	<tr>
+		<td>数量</td>
+		<td id="num"></td>
+		<td>仓库</td>
+		<td>
+			<input class="easyui-combobox" name="storeUuid" data-options="url:'store_mylist.action',textField:'name',valueField:'uuid'">
+		</td>
+	</tr>	
+</table>
+<span id="inDiv">
+  <button type="button" onClick="doInStore()">入库</button>
+</span>
+<span id="outDiv">
+  <button type="button" onClick="doOutStore()">出库</button>
+</span>
+
+</form>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+package cn.itcast.erp.dao.impl;
+
+
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
+
+import cn.itcast.erp.dao.IInventoryDao;
+import cn.itcast.erp.entity.Goods;
+import cn.itcast.erp.entity.Inventory;
+
+public class InventoryDao extends BaseDao<Inventory> implements IInventoryDao {
+
+	public DetachedCriteria getDetachedCriteria(Inventory inventory1,Inventory inventory2,Object param){
+		DetachedCriteria dc=DetachedCriteria.forClass(Inventory.class);
+		if(inventory1!=null){
+			if(inventory1.getCreatetime()!=null){
+				dc.add(Restrictions.ge("createtime", inventory1.getCreatetime()));
+			}
+			if(inventory1.getChecktime()!=null){
+				dc.add(Restrictions.ge("checktime", inventory1.getChecktime()));
+			}
+			if(inventory1.getType()!=null && inventory1.getType().trim().length()>0){
+				dc.add(Restrictions.eq("type", inventory1.getType()));
+			}
+			if(inventory1.getCreater()!=null){
+				dc.add(Restrictions.eq("creater", inventory1.getCreater()));
+			}
+			if(inventory1.getChecker()!=null){
+				dc.add(Restrictions.eq("checker", inventory1.getChecker()));
+			}
+			if(inventory1.getState()!=null && inventory1.getState().trim().length()>0){
+				dc.add(Restrictions.eq("state", inventory1.getState()));
+			}
+		}
+		if(inventory2!=null){
+			if(inventory2.getCreatetime()!=null){
+				dc.add(Restrictions.le("createtime", inventory2.getCreatetime()));
+			}
+			if(inventory2.getChecktime()!=null){
+				dc.add(Restrictions.le("checktime", inventory2.getChecktime()));
+			}
+		}
+		return dc;
+	}
+	
+
+}

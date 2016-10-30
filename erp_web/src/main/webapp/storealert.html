@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>库存预警</title>
+<link rel="stylesheet" type="text/css" href="ui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="ui/themes/icon.css">
+<script type="text/javascript" src="ui/jquery.min.js"></script>
+<script type="text/javascript" src="ui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="ui/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="js/report.js"></script>
+<script type="text/javascript">
+var url="storedetail_storeAlertList.action";
+var columns=[[
+              {field:'uuid',title:'商品编号',width:100},
+              {field:'name',title:'商品名称',width:100},
+              {field:'storenum',title:'库存数量',width:100},
+              {field:'outnum',title:'待发货数量',width:100}
+              ]];
+       
+ //发送邮件
+ function send(){
+	 $.ajax({
+		 url:'storedetail_sendStoreAlertMail.action',
+		 dataType:'json',
+		 success:function(value){
+			 $.messager.alert('提示',value.message);			 
+		 }		 
+	 });	 
+ }         
+              
+
+</script>
+</head>
+<body>
+<table id="grid"></table>
+<button onclick="send()">发送警报邮件</button>
+</body>
+</html>

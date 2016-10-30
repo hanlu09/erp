@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>盘盈盘亏登记表</title>
+<link rel="stylesheet" type="text/css" href="ui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="ui/themes/icon.css">
+<script type="text/javascript" src="ui/jquery.min.js"></script>
+<script type="text/javascript" src="ui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="ui/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="js/form.js"></script>
+<script type="text/javascript" src="js/crud.js"></script>
+<script type="text/javascript" src="js/date.js"></script>
+<script type="text/javascript" src="js/ajax.js"></script>
+<script type="text/javascript">
+var name="inventory";
+var columns=[[
+	  		    {field:'uuid',title:'编号',width:100},
+	  		    {field:'goodsuuid',title:'商品',width:100,formatter:function(value,row,index){		  		    			  		    	
+	  		    	return ajax('goods_get.action?id=', value,'goods_'+index,'t.name' );		  		    	
+	  		    }},
+	  		    {field:'storeuuid',title:'仓库',width:100,formatter:function(value,row,index){		  		    			  		    	
+	  		    	return ajax('store_get.action?id=', value,'store_'+index,'t.name' );		  		    	
+	  		    }},
+	  		    {field:'num',title:'数量',width:100},
+	  		    {field:'type',title:'登记类型',width:100,formatter:function(value){
+	  		    	if(value=='1'){
+	  		    		return "盘盈";
+	  		    	}
+	  		    	if(value=='2'){
+	  		    		return "盘亏";
+	  		    	}
+	  		    }},
+	  		    {field:'createtime',title:'登记日期',width:100,formatter:function(value){
+	  		    	return new Date(value).Format("yyyy-MM-dd");
+	  		    }},
+	  		    {field:'checktime',title:'审核日期',width:100,formatter:function(value){
+	  		    	return new Date(value).Format("yyyy-MM-dd");
+	  		    }},
+	  		    {field:'creater',title:'登记人',width:100,formatter:function(value,row,index){		  		    			  		    	
+	  		    	return ajax('emp_get.action?id=', value,'emp_'+index,'t.name' );		  		    	
+	  		    }},
+	  		    {field:'checker',title:'审核人',width:100,formatter:function(value,row,index){		  		    			  		    	
+	  		    	return ajax('emp_get.action?id=', value,'emp_'+index,'t.name' );		  		    	
+	  		    }},
+	  		    {field:'state',title:'订单状态',width:100,formatter:function(value){
+	  		    	if(value=='0'){
+	  		    		return "未审核";
+	  		    	}
+	  		    	if(value=='1'){
+	  		    		return "已审核";
+	  		    	}
+	  		    }},
+	  		    {field:'remark',title:'备注',width:100},
+	  		  	{field:'-',title:'操作',width:200,formatter:function(value,row,index)
+			    	{
+			    		return "<a href='#' onclick='edit("+row.uuid+")'>修改</a> <a href='#' onclick='dele("+row.uuid+")'>删除</a>";
+			    	}}
+			]];
+
+</script>
+</head>
+<body>
+<div>
+<form id="searchForm">
+	登记日期：
+	<input name="t1.createtime" class="easyui-datebox">
+	至
+	<input name="t2.createtime" class="easyui-datebox">
+	
+	审核日期：
+	<input name="t1.checktime" class="easyui-datebox">
+	至
+	<input name="t2.checktime" class="easyui-datebox">
+	
+	类型：<input name="t1.type" class="easyui-combobox" 
+		data-options="data:[
+					{uuid:' ',name:'全部'},
+					{uuid:'1',name:'盘盈'},
+					{uuid:'2',name:'盘亏'}],valueField:'uuid',textField:'name',editable:false">
+					
+	登记人：<input name="t1.creater" class="easyui-combobox" 
+		data-options="url:'emp_list.action',valueField:'uuid',textField:'name'" >
+		
+	审核人：<input name="t1.checker" class="easyui-combobox" 
+		data-options="url:'emp_list.action',valueField:'uuid',textField:'name'">
+		
+	状态：<input name="t1.state" class="easyui-combobox" 
+		data-options="data:[
+					{uuid:' ',name:'全部'},
+					{uuid:'0',name:'未审核'},
+					{uuid:'1',name:'已审核'}],valueField:'uuid',textField:'name',editable:false">
+						
+<button type="button" id="btnSearch">查询</button>
+</form>
+</div>
+<table id="grid"></table>
+<div id="editWindow" class="easyui-window" title="添加记录" 
+style="width: 350px;height: 500px" data-options="closed:true">
+<form id="editForm">
+<table>
+	<tr>
+		<td>商品名称</td><td><input name="t.goodsuuid"
+		class="easyui-combobox" 
+		data-options="url:'goods_list.action',valueField:'uuid',textField:'name',editable:false">
+		</td>
+	</tr>
+	<tr>
+		<td>仓库名称</td><td><input name="t.storeuuid"
+		 class="easyui-combobox" 
+		data-options="url:'store_list.action',valueField:'uuid',textField:'name',editable:false" >
+		</td>
+	</tr>
+	<tr>
+		<td>数量</td><td><input name="t.num" class="easyui-numberbox"> </td>
+	</tr>
+	<tr>
+		<td>登记类型</td><td><input name="t.type"  
+		class="easyui-combobox" 
+		data-options="data:[
+					{uuid:'1',name:'盘盈'},
+					{uuid:'2',name:'盘亏'}],valueField:'uuid',textField:'name',editable:false"> </td>
+	</tr>
+	<tr>
+		<td>登记日期</td><td><input name="t.createtime" class="easyui-datebox" > </td>
+	</tr>
+	<tr>
+		<td>审核日期</td><td><input name="t.checktime" class="easyui-datebox"> </td>
+	</tr>
+	<tr>
+		<td>登记人</td><td><input name="t.creater" 
+		class="easyui-combobox" 
+		data-options="url:'emp_list.action',valueField:'uuid',textField:'name',editable:false"></td>
+	</tr>
+	<tr>
+		<td>审核人</td><td><input name="t.checker" 
+		class="easyui-combobox" 
+		data-options="url:'emp_list.action',valueField:'uuid',textField:'name',editable:false"></td>
+	</tr>
+	<tr>
+		<td>订单状态</td><td><input name="t.state" 
+		class="easyui-combobox" 
+		data-options="data:[
+					{uuid:'0',name:'未审核'},
+					{uuid:'1',name:'已审核'}],valueField:'uuid',textField:'name',editable:false"> </td>
+	</tr>
+	<tr>
+		<td>备注</td><td><input name="t.remark" > </td>
+	</tr>
+</table>
+<button id="btnSave" type="button">保存</button>
+</form>
+</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

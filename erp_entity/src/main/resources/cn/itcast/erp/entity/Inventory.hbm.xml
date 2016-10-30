@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="cn.itcast.erp.entity.Inventory" table="inventory">
+		<id name="uuid">
+			<generator class="org.hibernate.id.SequenceGenerator">
+				<param name="sequence">inventory_seq</param>
+			</generator>			   
+		</id>
+		<property name="goodsuuid"></property>
+		<property name="storeuuid"></property>
+		<property name="num"></property>
+		<property name="type"></property>
+		<property name="createtime"></property>
+		<property name="checktime"></property>
+		<property name="creater"></property>
+		<property name="checker"></property>
+		<property name="state"></property>
+		<property name="remark"></property>
+	</class>
+</hibernate-mapping>

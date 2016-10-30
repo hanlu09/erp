@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>退货登记</title>
+<link rel="stylesheet" type="text/css"
+	href="ui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="ui/themes/icon.css">
+<script type="text/javascript" src="ui/jquery.min.js"></script>
+<script type="text/javascript" src="ui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="ui/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="js/form.js"></script>
+<script type="text/javascript" src="js/request.js"></script>
+<script type="text/javascript" src="js/returnorder_add.js"></script>
+<script type="text/javascript">
+	if (Request['type'] == '1') {
+		document.title = '采购退货登记';
+	}
+	if (Request['type'] == '2') {
+		document.title = '销售退货登记';
+	}
+</script>
+</head>
+
+<body>
+	<form id="supplierForm">
+		<script type="text/javascript">
+			if (Request['type'] == '1') {
+				document.write("供应商");
+			}
+			if (Request['type'] == '2') {
+				document.write("客户");
+			}
+		</script>
+		<input id="supplier" name="t.supplieruuid">
+	</form>
+	<table id="grid"></table>
+	<span id="sum">总金额:0.00</span>
+	<button id="btnSave">提交订单</button>
+	<table id="goodsgrid"></table>
+</body>
+</html>

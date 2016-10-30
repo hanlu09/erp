@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>盘盈盘亏审核</title>
+<link rel="stylesheet" type="text/css" href="ui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="ui/themes/icon.css">
+<script type="text/javascript" src="ui/jquery.min.js"></script>
+<script type="text/javascript" src="ui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="ui/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="ui/datagrid-detailview.js"></script>
+<script type="text/javascript" src="js/form.js"></script>
+<script type="text/javascript" src="js/date.js"></script>
+<script type="text/javascript" src="js/ajax.js"></script>
+<script type="text/javascript" src="js/inventory.js"></script>
+<script type="text/javascript" src="js/data/state.js"></script>
+<script type="text/javascript" src="js/data/type.js"></script>
+<script type="text/javascript">
+	var url='inventory_listByPage.action?t1.state=0';
+	var operation={field:'-',title:'操作',width:100,formatter:function(value,row,index){
+	    	return "<a href='#' onClick='doCheck(" + row.uuid +")'>审核</a>";
+	    }};
+	var isFilter=false;//不过滤 
+</script>
+</head>
+<body>
+<div class="easyui-panel">
+<form id="searchForm">
+
+</form>
+<table id="grid"></table>
+</div>
+</body>
+</html>

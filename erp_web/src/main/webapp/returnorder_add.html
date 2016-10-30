@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>退货登记</title>
+<link rel="stylesheet" type="text/css" href="ui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="ui/themes/icon.css">
+<script type="text/javascript" src="ui/jquery.min.js"></script>
+<script type="text/javascript" src="ui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="ui/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="ui/datagrid-detailview.js"></script>
+<script type="text/javascript" src="js/form.js"></script>
+<script type="text/javascript" src="js/date.js"></script>
+<script type="text/javascript" src="js/ajax.js"></script>
+<script type="text/javascript" src="js/request.js"></script>
+<script type="text/javascript" src="js/returnorder_add.js"></script>
+<script type="text/javascript">
+	if (Request['type'] == '1') {
+		document.title = '采购退货登记';
+		var url = 'orders_listByPage.action?t1.state=3&t1.type=1';
+	}
+	if (Request['type'] == '2') {
+		document.title = '销售退货登记';
+		var url = 'orders_listByPage.action?t1.state=3&t1.type=2';
+	}
+</script>
+</head>
+
+<body>
+	<div class="easyui-accordion" data-options="multiple:true">   
+		<div title="原订单信息" style="overflow:auto;padding:10px;">   
+			<div class="easyui-panel">
+				<form id="searchForm">
+					供应商<input name="t1.supplieruuid" class="easyui-combobox" data-options="url:'supplier_list.action?t1.type=1',valueField:'uuid',textField:'name'">
+					<button type="button" id="btnSearch">查询</button>
+				</form>
+			</div>
+			<table id="searchgrid" style="width: 600px"></table>
+		</div>
+
+		<div id="storedetailDiv" title="库存" style="padding:10px;">   
+			<div class="easyui-panel">
+				<form id="storedetailForm">
+					仓库<input name="t1.storeuuid" class="easyui-combobox" data-options="url:'store_list.action?',valueField:'uuid',textField:'name'">
+					<button type="button" id="btnStoreSearch">查询</button>
+				</form>
+			</div>
+			<table id="storedetailgrid" style="width: 600px"></table>
+	    </div>
+
+	    <div title="退货登记" data-options="selected:true">   
+	    	<form id="supplierForm">
+				<script type="text/javascript">
+					if (Request['type'] == '1') {
+						document.write("供应商");
+					}
+					if (Request['type'] == '2') {
+						document.write("客户");
+					}
+				</script>
+				<input id="supplier" name="t.supplieruuid">
+				订单编号
+				<input id="orders" name="t.ordersuuid">
+			</form>
+			<table id="grid"></table>
+			<span id="sum">总金额:0.00</span>
+			<button id="btnSave">提交订单</button>
+	    </div>   
+	</div>
+</body>
+</html>

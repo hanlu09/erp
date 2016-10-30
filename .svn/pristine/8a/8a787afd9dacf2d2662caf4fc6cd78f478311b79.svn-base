@@ -1,0 +1,267 @@
+package cn.itcast.erp.biz.impl;
+
+import java.awt.Font;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.ItemLabelAnchor;
+import org.jfree.chart.labels.ItemLabelPosition;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.title.LegendTitle;
+import org.jfree.chart.title.TextTitle;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.ui.TextAnchor;
+
+import cn.itcast.erp.biz.IReportBiz;
+import cn.itcast.erp.dao.IReportDao;
+import cn.itcast.erp.entity.Report;
+/**
+ * 报表业务逻辑层
+ * @author Administrator
+ *
+ */
+public class ReportBiz implements IReportBiz {
+
+	private IReportDao reportDao;
+		
+	public void setReportDao(IReportDao reportDao) {
+		this.reportDao = reportDao;
+	}
+
+
+	/**
+	 * 销售统计表
+	 */
+	public List orderReport(Date date1,Date date2) {
+		
+		if(date1==null || date2==null){
+			return reportDao.orderReport();
+		}else
+		{
+			return reportDao.orderReport(date1, date2);
+		}
+	}
+	
+	/**
+	 * 销售退货统计报表(按日期)
+	 */
+	public List returnOrderReport(Date date1,Date date2) {
+		if (date1 == null || date2 == null) {
+			return reportDao.returnOrderReport();
+		}
+		return reportDao.returnOrderReport(date1, date2);
+	}
+	
+	/**
+	 * 销售统计图
+	 * @param outputStream
+	 * @param date1
+	 * @param date2
+	 * @throws IOException
+	 */
+	public void orderChart(OutputStream outputStream,Date date1,Date date2) throws IOException{
+		
+		//获取销售统计数据
+		List<Report> list = orderReport(date1,date2);
+		//构建饼图数据集
+		DefaultPieDataset dataSet=new DefaultPieDataset();
+		for(Report report:list){			
+			dataSet.setValue(report.getName(), report.getMoney());
+		}
+		createPieChart(outputStream, dataSet, "销售统计图");
+	}
+	
+	/**
+	 * 销售退货统计图
+	 * @param outputStream
+	 * @param date1
+	 * @param date2
+	 * @throws IOException
+	 */
+	public void returnOrderChart(OutputStream outputStream, Date date1,Date date2) throws IOException {
+		//获取销售退货统计数据
+		List<Report> reports = returnOrderReport(date1,date2);
+		//获取销售退货统计饼图的数据集
+		DefaultPieDataset dataset = new DefaultPieDataset();
+		//将统计数据放入到数据集当中
+		for (Report report : reports) {
+			dataset.setValue(report.getName(), report.getMoney());
+		}
+		
+		createPieChart(outputStream, dataset, "销售退货统计图");
+		
+	}
+	
+	/**
+	 * 导出销售统计表
+	 * @param outputStream
+	 * @param date1
+	 * @param date2
+	 * @throws IOException
+	 */
+	public void orderExcel(OutputStream outputStream,Date date1,Date date2) throws IOException{
+		
+		//创建新的工作簿对象
+		HSSFWorkbook book=new HSSFWorkbook();
+		//创建工作表
+		HSSFSheet sheet = book.createSheet();
+		//创建标题行
+		HSSFRow titleRow = sheet.createRow(0);
+		titleRow.createCell(0).setCellValue("商品类别");
+		titleRow.createCell(1).setCellValue("销售额");
+		//获取报表数据
+		List<Report> list = orderReport(date1,date2);
+		
+		//向excel写入报表数据
+		for(int i=0;i<list.size();i++){		
+			Report report = list.get(i);
+			HSSFRow row = sheet.createRow(i+1);
+			row.createCell(0).setCellValue(report.getName());
+			row.createCell(1).setCellValue(report.getMoney());			
+		}
+				
+		//输出到输出流
+		book.write(outputStream);
+		
+		
+	}
+	/**
+	 * 导出销售退货统计表
+	 * @param outputStream
+	 * @param date1
+	 * @param date2
+	 * @throws IOException
+	 */
+	public void returnOrderExcel(OutputStream outputStream,Date date1,Date date2) throws IOException{
+		
+		//创建新的工作簿对象
+		HSSFWorkbook book=new HSSFWorkbook();
+		//创建工作表
+		HSSFSheet sheet = book.createSheet();
+		//创建标题行
+		HSSFRow titleRow = sheet.createRow(0);
+		titleRow.createCell(0).setCellValue("商品类别");
+		titleRow.createCell(1).setCellValue("销售额");
+		//获取报表数据
+		List<Report> list = returnOrderReport(date1, date2);
+		
+		//向excel写入报表数据
+		for(int i=0;i<list.size();i++){		
+			Report report = list.get(i);
+			HSSFRow row = sheet.createRow(i+1);
+			row.createCell(0).setCellValue(report.getName());
+			row.createCell(1).setCellValue(report.getMoney());			
+		}
+		
+		//输出到输出流
+		book.write(outputStream);
+		
+		
+	}
+	
+	
+	/**
+	 * 创建饼图
+	 * @param outputStream
+	 * @param dataSet
+	 * @param title
+	 * @throws IOException
+	 */
+	private void createPieChart(OutputStream outputStream,DefaultPieDataset dataSet,String title) throws IOException{
+		
+		JFreeChart chart=ChartFactory.createPieChart("", dataSet, true, false, false);
+		
+		//设置标题
+		chart.setTitle(new TextTitle(title, new Font("黑体",Font.BOLD,14)));
+		//获取饼图绘图区
+		PiePlot plot = (PiePlot) chart.getPlot();		
+		plot.setLabelFont(new Font("黑体",Font.BOLD,12));//设置绘图区的标签字体
+		
+		//获取图例对象
+		LegendTitle legend = chart.getLegend();
+		legend.setItemFont(new Font("黑体",Font.BOLD,10));//设置图例项字体
+		
+		//将图表输出到输出流 
+		ChartUtilities.writeChartAsPNG(outputStream, chart, 400, 300);
+		
+	}
+	/**
+	 * 按年获取月份统计销售报表
+	 */
+	public List saleReport(String year){
+		List<Report> list = reportDao.saleReport(year);
+		//TODO 添加'月份' 显示一年统计
+		for (Report report : list) {
+			if (report.getName().substring(0, 1).equals("0")) {
+				report.setName(report.getName().substring(1, 2)+"月");
+			}else {
+				report.setName(report.getName()+"月");
+			}
+		}
+		
+		return list;
+	}
+	/**
+	 * 获取年份s
+	 */
+	public List getYears(){
+		List<Report> list = reportDao.getYears();
+		for (Report report : list) {
+			report.setName(report.getName()+"年");
+		}
+		return list;
+	}
+	/**
+	 * 生成柱状图
+	 * @throws IOException 
+	 */
+	public void saleChart(OutputStream ops,String year) throws IOException{
+		DefaultCategoryDataset dataset= new DefaultCategoryDataset();
+		List<Report> list = saleReport(year);
+		for (Report report : list) {
+			dataset.setValue(report.getMoney(),"销售额",report.getName());
+		}
+		JFreeChart chart = ChartFactory.createBarChart(year+"年销售趋势分析图", "月份", "月销售额(元)", dataset, PlotOrientation.VERTICAL, true, false, false);
+		CategoryPlot plot = chart.getCategoryPlot();
+		BarRenderer render = new BarRenderer();
+		render.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+		render.setBaseItemLabelsVisible(true);
+		render.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12,TextAnchor.CENTER));
+		render.setItemLabelAnchorOffset(10);
+		plot.setRenderer(render);
+		ChartUtilities.writeChartAsPNG(ops, chart, 700, 400);
+	}
+	/**
+	 * 导出到excel
+	 * @throws IOException 
+	 */
+	public void saleExcel(OutputStream out,String year) throws IOException{
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		HSSFSheet sheet = workbook.createSheet();
+		HSSFRow titlerow = sheet.createRow(0);
+		titlerow.createCell(0).setCellValue("月份");
+		titlerow.createCell(1).setCellValue("销售额");
+		List<Report> list = saleReport(year);
+		int number = 1;
+		for (Report report : list) {
+			HSSFRow row = sheet.createRow(number);
+			row.createCell(0).setCellValue(report.getName());
+			row.createCell(1).setCellValue(report.getMoney());
+			number++;
+		}
+		workbook.write(out);
+	}
+}

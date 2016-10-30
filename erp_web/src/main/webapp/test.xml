@@ -1,0 +1,1 @@
+<generator class="org.hibernate.id.SequenceGenerator"> <param name="sequence">dep_seq</param> </generator>
